@@ -43,3 +43,17 @@ jobs:
     - name: Run front-end tests with coverage
       working-directory: ./front
       run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadless
+
+    # Archive JaCoCo report as an artifact
+    - name: Upload JaCoCo coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-report
+        path: back/target/site/jacoco/
+
+    # Archive Angular coverage report as an artifact
+    - name: Upload Angular coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: angular-coverage
+        path: front/coverage/
