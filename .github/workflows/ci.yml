@@ -59,6 +59,7 @@ jobs:
 
     # Analyse de la qualité du code avec SonarQube
     - name: SonarQube Scan
+      working-directory: ./back
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
