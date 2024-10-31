@@ -1,4 +1,4 @@
-name: Build, Test, and Coverage Report
+name: Build, Test, and Quality Analysis
 
 on:
   push:
@@ -18,10 +18,10 @@ jobs:
       uses: actions/checkout@v3
 
     # Back-end Configuration
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Build and test back-end with Maven
@@ -44,16 +44,25 @@ jobs:
       working-directory: ./front
       run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadless
 
-    # Archive JaCoCo report as an artifact
+    # Archive JaCoCo et Angular reports
     - name: Upload JaCoCo coverage report
       uses: actions/upload-artifact@v3
       with:
         name: jacoco-report
         path: back/target/site/jacoco/
 
-    # Archive Angular coverage report as an artifact
     - name: Upload Angular coverage report
       uses: actions/upload-artifact@v3
       with:
         name: angular-coverage
         path: front/coverage/
+
+    # Analyse de la qualité du code avec SonarQube
+    - name: SonarQube Scan
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        mvn sonar:sonar \
+          -Dsonar.projectKey=BobApp \
+          -Dsonar.host.url=http://localhost:9000 \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
