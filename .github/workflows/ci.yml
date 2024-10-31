@@ -1,4 +1,4 @@
-name: Build and Test Back-end Project
+name: Build, Test, and Coverage Report
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Récupère le code source
+    # Étape 1 : Récupérer le code source
     - name: Checkout repository
       uses: actions/checkout@v3
 
@@ -22,12 +22,24 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '11'
-        distribution: 'temurin'  # Utilise OpenJDK Temurin
+        distribution: 'temurin'
 
-    # Compile le projet avec Maven
-    - name: Build back-end with Maven
-      run: mvn -f back/pom.xml clean install
+    - name: Build and test back-end with Maven
+      run: mvn -f back/pom.xml clean verify
 
-    # Lance les tests
-    - name: Run back-end tests
-      run: mvn -f back/pom.xml test
+    - name: Generate JaCoCo coverage report
+      run: mvn -f back/pom.xml jacoco:report
+
+    # Front-end Configuration
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install front-end dependencies
+      working-directory: ./front
+      run: npm install
+
+    - name: Run front-end tests with coverage
+      working-directory: ./front
+      run: npm run test -- --coverage
