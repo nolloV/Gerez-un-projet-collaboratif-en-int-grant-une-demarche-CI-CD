@@ -61,6 +61,7 @@ jobs:
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      working-directory: ./back  # Change de répertoire vers 'back'
       run: |
         mvn sonar:sonar \
           -Dsonar.projectKey=nollov_Bobapp \
