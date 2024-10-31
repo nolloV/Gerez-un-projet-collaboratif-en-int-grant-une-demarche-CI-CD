@@ -42,4 +42,4 @@ jobs:
 
     - name: Run front-end tests with coverage
       working-directory: ./front
-      run: npm run test -- --code-coverage
+      run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadless
