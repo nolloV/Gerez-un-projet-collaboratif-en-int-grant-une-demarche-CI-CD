@@ -78,10 +78,12 @@ jobs:
 
     - name: Build and push back-end Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/bobapp-backend:latest -f back/Dockerfile .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/bobapp-backend:latest -f back/Dockerfile back
         docker push ${{ secrets.DOCKER_USERNAME }}/bobapp-backend:latest
+
 
     - name: Build and push front-end Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/bobapp-frontend:latest -f front/Dockerfile .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/bobapp-frontend:latest -f front/Dockerfile front
         docker push ${{ secrets.DOCKER_USERNAME }}/bobapp-frontend:latest
+
