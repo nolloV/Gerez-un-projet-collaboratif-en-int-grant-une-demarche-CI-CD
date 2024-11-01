@@ -1,4 +1,4 @@
-name: Build, Test, Quality Analysis, and Deploy
+name: Build, Test, and Quality Analysis
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Récupérer le code source
+    # Étape 1 : Récupérer le code source
     - name: Checkout repository
       uses: actions/checkout@v3
 
@@ -61,7 +61,7 @@ jobs:
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      working-directory: ./back
+      working-directory: ./back  # Change de répertoire vers 'back'
       run: |
         mvn sonar:sonar \
           -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
