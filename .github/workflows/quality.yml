@@ -21,9 +21,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Étape de compilation pour générer les fichiers .class nécessaires
-    - name: Compile the project
-      run: mvn -f back/pom.xml clean compile
+    # Étape de compilation et de génération du rapport de couverture JaCoCo
+    - name: Build and Generate Coverage Report
+      run: mvn -f back/pom.xml clean verify jacoco:report
 
     - name: SonarCloud Scan
       env:
