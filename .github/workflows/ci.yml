@@ -64,7 +64,7 @@ jobs:
       working-directory: ./back
       run: |
         mvn sonar:sonar \
-          -Dsonar.projectKey=nollov_Bobapp \
+          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
