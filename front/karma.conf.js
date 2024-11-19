@@ -33,7 +33,9 @@ module.exports = function (config) {
         '**/proxy.config.json',
         '**/styles.scss',
         '**/test.ts'
-      ] // Exclure les fichiers spécifiques de l'analyse
+      ], // Exclure les fichiers spécifiques de l'analyse
+      includeAllSources: false,
+
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
