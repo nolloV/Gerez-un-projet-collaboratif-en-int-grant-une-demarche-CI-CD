@@ -33,18 +33,12 @@ jobs:
     - name: Build and Generate Coverage Report (Back-end)
       run: mvn -f back/pom.xml clean verify jacoco:report
 
-    # Étape d'analyse SonarCloud pour le Back-end
-    - name: SonarCloud Scan (Back-end)
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    # Étape pour convertir le rapport JaCoCo (XML) en LCOV
+    - name: Convert JaCoCo Report to LCOV
       working-directory: ./back
       run: |
-        mvn sonar:sonar \
-          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
-          -Dsonar.organization=nollov \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.java.binaries=target/classes
+        pip install jacoco2lcov
+        jacoco2lcov target/site/jacoco/jacoco.xml > jacoco.lcov
 
     # Étape pour exécuter les tests front-end et générer la couverture
     - name: Run Tests and Generate Coverage (Front-end)
@@ -53,28 +47,35 @@ jobs:
         npm install
         npm run test -- --code-coverage
 
-    # Vérification de l'existence du fichier lcov.info pour le Front-end
-    - name: Verify Front-end Coverage Report
-      working-directory: ./front
+    # Vérification de l'existence des rapports LCOV
+    - name: Verify Coverage Reports
       run: |
-        if [ ! -f coverage/bobapp/lcov.info ]; then
-          echo "Error: Coverage file not found at coverage/bobapp/lcov.info"
+        if [ ! -f front/coverage/bobapp/lcov.info ]; then
+          echo "Error: Front-end coverage file not found."
+          exit 1
+        fi
+        if [ ! -f back/jacoco.lcov ]; then
+          echo "Error: Back-end coverage file not found."
           exit 1
         fi
 
-        # Étape d'analyse SonarCloud pour le Front-end
-    - name: SonarCloud Scan (Front-end)
+    # Fusion des rapports LCOV
+    - name: Combine Coverage Reports
+      working-directory: ./
+      run: |
+        lcov -a back/jacoco.lcov -a front/coverage/bobapp/lcov.info -o combined-coverage.info
+
+    # Étape d'analyse SonarCloud avec le rapport fusionné
+    - name: SonarCloud Scan (Unified)
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      working-directory: ./front
+      working-directory: ./
       run: |
         npx sonar-scanner \
           -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.sources=src \
-          -Dsonar.tests=src \
-          -Dsonar.test.inclusions=src/**/*.spec.ts \
-          -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info \
-          -Dsonar.exclusions=src/polyfills.ts
+          -Dsonar.sources=back/src,front/src \
+          -Dsonar.typescript.lcov.reportPaths=combined-coverage.info \
+          -Dsonar.exclusions=front/src/polyfills.ts
