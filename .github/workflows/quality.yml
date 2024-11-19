@@ -15,24 +15,41 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # Back-end : Configuration de Java et compilation
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    # Étape de compilation et de génération du rapport de couverture JaCoCo
-    - name: Build and Generate Coverage Report
+    - name: Build Back-end and Generate Coverage Report
       run: mvn -f back/pom.xml clean verify jacoco:report
 
+    # Front-end : Configuration de Node.js et tests avec couverture
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install Front-end Dependencies
+      working-directory: ./front
+      run: npm install
+
+    - name: Run Front-end Tests and Generate Coverage
+      working-directory: ./front
+      run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadless
+
+    # SonarCloud Scan pour back-end et front-end
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      working-directory: ./back
       run: |
-        mvn sonar:sonar \
+        mvn -f back/pom.xml sonar:sonar \
           -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.java.binaries=target/classes
+          -Dsonar.java.binaries=back/target/classes \
+          -Dsonar.sources=back/src,front/src \
+          -Dsonar.typescript.lcov.reportPaths=front/coverage/bobapp/lcov.info \
+          -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
