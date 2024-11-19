@@ -1,3 +1,7 @@
+# SonarScanner
+.scannerwork/
+front/.scannerwork/
+
 # Aide et documentation
 HELP.md
 
@@ -11,10 +15,11 @@ target/
 node_modules/
 dist/
 
-# Inclure le rapport de couverture pour SonarCloud
-# Ajout de l'exception pour lcov.info
+# Couverture des tests (inclusion de lcov.info pour SonarCloud)
 coverage/
 !coverage/lcov.info
+front/coverage/
+!front/coverage/bobapp/lcov.info
 
 # Spring Tool Suite (STS)
 .apt_generated
@@ -41,7 +46,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# VS Code
+# Visual Studio Code
 .vscode/
 
 # Java
