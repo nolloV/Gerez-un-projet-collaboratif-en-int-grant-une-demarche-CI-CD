@@ -23,7 +23,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Installation des dépendances système pour ChromeHeadless (Front-end)
+    # Installation des dépendances système pour ChromeHeadless (pour le Front-end)
     - name: Install Chrome Dependencies
       run: |
         sudo apt-get update
@@ -65,11 +65,6 @@ jobs:
           exit 1
         fi
 
-    # Affichage du rapport LCOV pour diagnostic
-    - name: Display LCOV Info
-      working-directory: ./front
-      run: cat coverage/bobapp/lcov.info
-
     # Analyse SonarCloud pour le Front-end
     - name: SonarCloud Scan (Front-end)
       env:
@@ -77,11 +72,11 @@ jobs:
       working-directory: ./front
       run: |
         npx sonar-scanner \
-          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD\
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.sources=src/app,src/services \
-          -Dsonar.tests=src/app/**/*.spec.ts,src/services/**/*.spec.ts \
+          -Dsonar.sources=src \
+          -Dsonar.tests=src \
           -Dsonar.test.inclusions=src/**/*.spec.ts \
           -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info \
-          -Dsonar.exclusions=src/polyfills.ts,src/environments/**/*.ts,src/index.html,src/main.ts,src/proxy.config.json,src/styles.scss,src/test.ts
+          -Dsonar.exclusions=src/polyfills.ts,src/environments/**/*.ts
