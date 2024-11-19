@@ -16,37 +16,40 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Étape pour configurer Java 17
+    # Étape pour configurer Java 17 pour le Back-end
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    # Installation des dépendances système pour ChromeHeadless
+    # Installation des dépendances système pour ChromeHeadless (pour le Front-end)
     - name: Install Chrome Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y libappindicator3-1 fonts-liberation libasound2 libnss3 libxss1 xdg-utils libatk-bridge2.0-0 libgtk-3-0
 
-    # Étape de compilation et de génération du rapport de couverture pour le back-end
+    # Compilation et génération du rapport de couverture pour le Back-end
     - name: Build and Generate Coverage Report (Back-end)
-      run: mvn -f back/pom.xml clean verify jacoco:report
+      working-directory: ./back
+      run: mvn clean verify jacoco:report
 
-    # Étape d'analyse SonarCloud pour le Back-end
+    # Analyse SonarCloud pour le Back-end
     - name: SonarCloud Scan (Back-end)
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN2 }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       working-directory: ./back
       run: |
-        mvn sonar:sonar \
-          -Dsonar.projectKey=nollov_bobapp-back \
+        npx sonar-scanner \
+          -Dsonar.projectKey=nolloV_Bobapp-back \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN2 }} \
-          -Dsonar.java.binaries=target/classes
+          -Dsonar.sources=src \
+          -Dsonar.java.binaries=target/classes \
+          -Dsonar.junit.reportPaths=target/surefire-reports \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
-    # Étape pour exécuter les tests front-end et générer la couverture
+    # Installation des dépendances et exécution des tests pour le Front-end
     - name: Run Tests and Generate Coverage (Front-end)
       working-directory: ./front
       run: |
@@ -62,22 +65,16 @@ jobs:
           exit 1
         fi
 
-    # Affichage du rapport de couverture pour diagnostic
-    - name: Print Front-end Coverage Report
-      working-directory: ./front
-      run: cat coverage/bobapp/lcov.info
-
-    # Étape d'analyse SonarCloud pour le Front-end
+    # Analyse SonarCloud pour le Front-end
     - name: SonarCloud Scan (Front-end)
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       working-directory: ./front
       run: |
         npx sonar-scanner \
-          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+          -Dsonar.projectKey=nolloV_Bobapp-frontend \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
           -Dsonar.sources=src \
           -Dsonar.tests=src \
           -Dsonar.test.inclusions=src/**/*.spec.ts \
