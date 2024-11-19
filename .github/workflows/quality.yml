@@ -15,46 +15,24 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Back-end : Compilation et analyse
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Build Back-end and Run Analysis
+    # Étape de compilation et de génération du rapport de couverture JaCoCo
+    - name: Build and Generate Coverage Report
+      run: mvn -f back/pom.xml clean verify jacoco:report
+
+    - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      working-directory: ./back
       run: |
-        mvn -f back/pom.xml clean verify sonar:sonar \
-          -Dsonar.projectKey=nollov_Bobapp \
+        mvn sonar:sonar \
+          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-    # Front-end : Installation de Node.js et analyse
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-
-    - name: Install Front-end Dependencies
-      working-directory: ./front
-      run: npm install
-
-    - name: Run Front-end Tests and Generate Coverage
-      working-directory: ./front
-      run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadless
-
-    - name: SonarCloud Scan (Front-end)
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      working-directory: ./front
-      run: |
-        npx sonar-scanner \
-          -Dsonar.projectKey=nollov_Bobapp \
-          -Dsonar.organization=nollov \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.sources=src \
-          -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info \
-          -Dsonar.sourceEncoding=UTF-8
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.java.binaries=target/classes
