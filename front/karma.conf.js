@@ -26,7 +26,22 @@ module.exports = function (config) {
         { type: 'html' }, // Rapport HTML pour un affichage local
         { type: 'lcov', subdir: '.' }, // Rapport LCOV pour SonarCloud
         { type: 'text-summary' } // Résumé dans la console
-      ]
+      ],
+      check: {
+        global: {
+          statements: 80, // Exemple: ajustez selon vos besoins
+          lines: 80,
+          branches: 80,
+          functions: 80
+        }
+      },
+      exclude: [
+        '**/index.html', 
+        '**/main.ts', 
+        '**/proxy.config.json', 
+        '**/styles.scss', 
+        '**/test.ts'
+      ] // Exclure les fichiers spécifiques de l'analyse
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
