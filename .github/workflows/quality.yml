@@ -41,13 +41,14 @@ jobs:
       run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadless
 
     # Étape 4 : Debug des fichiers LCOV pour le front-end
-    - name: Debug LCOV File
+    - name: Debug LCOV File Path
       working-directory: ./front
       run: |
-        echo "Listing files in coverage/bobapp:"
+        echo "Vérification de l'emplacement du fichier LCOV"
         ls coverage/bobapp || echo "LCOV file not found!"
+        cat coverage/bobapp/lcov.info || echo "LCOV file is empty!"
 
-    # Étape 5 : Scan avec SonarCloud (intégration back-end et front-end)
+    # Étape 5 : Scan avec SonarCloud (uniquement back-end pour débogage)
     - name: SonarCloud Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -58,6 +59,4 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
           -Dsonar.java.binaries=back/target/classes \
-          -Dsonar.sources=back/src,front/src \
-          -Dsonar.typescript.lcov.reportPaths=front/coverage/bobapp/lcov.info \
-          -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
+          -Dsonar.sources=back/src
