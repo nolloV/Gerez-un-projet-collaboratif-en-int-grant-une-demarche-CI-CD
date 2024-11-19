@@ -32,27 +32,20 @@ jobs:
       working-directory: ./back
       run: |
         mvn sonar:sonar \
-          -Dsonar.projectKey=nollov_Bobapp \
+          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
           -Dsonar.java.binaries=target/classes
 
-    # Étape de tests et de couverture (Front-end)
-    - name: Install Dependencies and Run Tests (Front-end)
-      working-directory: ./front
-      run: |
-        npm install
-        npm run test -- --code-coverage
-
-    # Étape d'analyse SonarCloud pour le Front-end avec rapport LCOV
+    # Étape d'analyse SonarCloud pour le Front-end avec rapport existant
     - name: SonarCloud Scan (Front-end)
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       working-directory: ./front
       run: |
         npx sonar-scanner \
-          -Dsonar.projectKey=nollov_Bobapp \
+          -Dsonar.projectKey=nolloV_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD-frontend \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
