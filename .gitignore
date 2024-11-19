@@ -1,13 +1,22 @@
+# Aide et documentation
 HELP.md
+
+# Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# Node.js
 node_modules/
 dist/
-coverage/
 
-### STS ###
+# Inclure le rapport de couverture pour SonarCloud
+# Ajout de l'exception pour lcov.info
+coverage/
+!coverage/lcov.info
+
+# Spring Tool Suite (STS)
 .apt_generated
 .classpath
 .factorypath
@@ -16,13 +25,13 @@ coverage/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
+# IntelliJ IDEA
 .idea
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -32,10 +41,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### JAVA ###
+# Java
 .mvn
 
+# Angular
 .angular
