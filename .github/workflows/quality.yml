@@ -41,7 +41,7 @@ jobs:
       working-directory: ./back
       run: |
         npx sonar-scanner \
-          -Dsonar.projectKey=nolloV_Bobapp-back \
+          -Dsonar.projectKey=nollov_bobapp-back \
           -Dsonar.organization=nollov \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.sources=src \
