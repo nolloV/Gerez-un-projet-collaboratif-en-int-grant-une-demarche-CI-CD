@@ -33,12 +33,12 @@ jobs:
     - name: Build and Generate Coverage Report (Back-end)
       run: mvn -f back/pom.xml clean verify jacoco:report
 
-    # Étape pour convertir le rapport JaCoCo (XML) en LCOV
+    # Étape pour convertir le rapport JaCoCo (XML) en LCOV avec un outil Java
     - name: Convert JaCoCo Report to LCOV
       working-directory: ./back
       run: |
-        pip install jacoco2lcov
-        jacoco2lcov target/site/jacoco/jacoco.xml > jacoco.lcov
+        curl -L -o jacoco2lcov.jar https://raw.githubusercontent.com/davidB/jacoco2lcov/master/jacoco2lcov.jar
+        java -jar jacoco2lcov.jar target/site/jacoco/jacoco.xml > jacoco.lcov
 
     # Étape pour exécuter les tests front-end et générer la couverture
     - name: Run Tests and Generate Coverage (Front-end)
