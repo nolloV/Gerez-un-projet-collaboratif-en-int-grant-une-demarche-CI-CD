@@ -28,8 +28,9 @@ module.exports = function (config) {
       dir: require('path').join(__dirname, './coverage/bobapp'),
       subdir: '.',
       reporters: [
-        { type: 'html' },
-        { type: 'text-summary' }
+        { type: 'html' }, // Rapport HTML pour un affichage local
+        { type: 'lcov', subdir: '.' }, // Rapport LCOV pour SonarCloud
+        { type: 'text-summary' } // Résumé dans la console
       ]
     },
     reporters: ['progress', 'kjhtml'],
